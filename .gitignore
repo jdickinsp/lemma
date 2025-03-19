@@ -33,6 +33,7 @@ env/
 
 *.env
 bin/
+tmp/
 
 .pytest_cache/
 .coverage

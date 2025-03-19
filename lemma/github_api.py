@@ -3,12 +3,12 @@ import os
 import re
 from collections import namedtuple
 from enum import Enum
-from typing import List, Union, Dict, Optional
+from typing import Dict, List, Optional, Union
 from urllib.parse import urlparse, urlunparse
 
-from github import Github, Auth
-from github.Repository import Repository
+from github import Auth, Github
 from github.ContentFile import ContentFile
+from github.Repository import Repository
 
 from lemma.detect import is_ignored_file, is_test_file
 
@@ -60,9 +60,11 @@ def get_github_url_type(diff):
 
 class GitHubAPI:
     def __init__(self, github_token: str):
-        if not github_token:
-            raise ValueError("GitHub token not provided")
-        self.github = Github(auth=Auth.Token(github_token))
+        if github_token:
+            self.github = Github(auth=Auth.Token(github_token))
+        else:
+            # Initialize without authentication for public repos
+            self.github = Github()  # Unauthenticated access
 
     def get_repo(self, repo_name: str) -> Repository:
         return self.github.get_repo(repo_name)
@@ -449,12 +451,18 @@ def fetch_git_diffs(
     url: str, ignore_tests: bool = False
 ) -> Union[PullRequestDiff, BranchDiff, CommitDiff, str]:
     github_token = os.getenv("GITHUB_ACCESS_TOKEN")
-    if not github_token:
-        raise ValueError(
-            "GitHub token not found. Please set the GITHUB_ACCESS_TOKEN environment variable."
-        )
 
-    github_api = GitHubAPI(github_token)
+    # Create GitHub API instance with or without token
+    if github_token:
+        github_api = GitHubAPI(github_token)
+    else:
+        # Initialize with an empty token - this will use unauthenticated access
+        # which has lower rate limits but still works for public repositories
+        print(
+            "Warning: GitHub token not found. Using unauthenticated access with lower rate limits."
+        )
+        github_api = GitHubAPI("")  # Pass empty string instead of raising an error
+
     url_type = GitHubURLIdentifier.identify_github_url_type(github_api, url)
     if url_type == GitHubURLType.UNKNOWN:
         raise ValueError("Invalid GitHub URL")
@@ -505,7 +513,15 @@ def validate_github_repo_url(url):
 
     owner, repo = match.groups()[:2]  # Extract owner and repo name
 
-    github_api = Github(os.getenv("GITHUB_ACCESS_TOKEN"))
+    github_token = os.getenv("GITHUB_ACCESS_TOKEN")
+    if github_token:
+        github_api = Github(github_token)
+    else:
+        # Initialize without authentication for public repos
+        github_api = Github()  # Unauthenticated access
+        print(
+            "Warning: GitHub token not found. Using unauthenticated access with lower rate limits."
+        )
 
     try:
         # Get the authenticated user

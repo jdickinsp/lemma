@@ -1,12 +1,18 @@
+import os
 import sqlite3
-from sqlite3 import Error
 import uuid
+from sqlite3 import Error
 
 
 def create_connection(db_file):
     """Create a database connection to the SQLite database specified by db_file"""
     conn = None
     try:
+        # Ensure the directory exists
+        db_dir = os.path.dirname(db_file)
+        if db_dir and not os.path.exists(db_dir):
+            os.makedirs(db_dir)
+
         conn = sqlite3.connect(db_file)
         print(f"SQLite Database created and connected to {db_file}")
         conn.execute("PRAGMA foreign_keys = ON")
