@@ -1,11 +1,12 @@
-from abc import ABC
 import abc
-from enum import Enum
 import os
 import sys
-from openai import AsyncOpenAI, OpenAI
+from abc import ABC
+from enum import Enum
+
 import ollama
 from anthropic import Anthropic, AsyncAnthropic
+from openai import AsyncOpenAI, OpenAI
 
 DEFAULT_TEMPERATURE = 0.6
 
@@ -19,11 +20,12 @@ class LLMType(Enum):
 def get_available_models():
     """Return a list of available LLM models."""
     return [
-        "o1-mini",  # OpenAI,
-        "gpt-4o-mini",
+        "o3-mini",  # OpenAI,
+        "o1-mini",
         "gpt-4o",
+        "claude-3-7-sonnet-latest",
         "claude-3-5-sonnet-latest",  # Anthropic
-        "claude-3-haiku-20240307",
+        "claude-3-5-haiku-latest",
         "llama3.1",  # Ollama
         "llama3.2",
         "deepseek-r1:8b",

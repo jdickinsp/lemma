@@ -64,7 +64,10 @@ class GitHubAPI:
             self.github = Github(auth=Auth.Token(github_token))
         else:
             # Initialize without authentication for public repos
-            self.github = Github()  # Unauthenticated access
+            self.github = Github()
+            print(
+                "Using GitHub API without authentication. Limited to public repositories with reduced rate limits."
+            )
 
     def get_repo(self, repo_name: str) -> Repository:
         return self.github.get_repo(repo_name)
@@ -451,17 +454,15 @@ def fetch_git_diffs(
     url: str, ignore_tests: bool = False
 ) -> Union[PullRequestDiff, BranchDiff, CommitDiff, str]:
     github_token = os.getenv("GITHUB_ACCESS_TOKEN")
-
-    # Create GitHub API instance with or without token
+    # Use token if available
     if github_token:
         github_api = GitHubAPI(github_token)
     else:
-        # Initialize with an empty token - this will use unauthenticated access
-        # which has lower rate limits but still works for public repositories
+        # For unauthenticated access
         print(
             "Warning: GitHub token not found. Using unauthenticated access with lower rate limits."
         )
-        github_api = GitHubAPI("")  # Pass empty string instead of raising an error
+        github_api = GitHubAPI("")  # Initialize with empty string
 
     url_type = GitHubURLIdentifier.identify_github_url_type(github_api, url)
     if url_type == GitHubURLType.UNKNOWN:
@@ -517,11 +518,7 @@ def validate_github_repo_url(url):
     if github_token:
         github_api = Github(github_token)
     else:
-        # Initialize without authentication for public repos
-        github_api = Github()  # Unauthenticated access
-        print(
-            "Warning: GitHub token not found. Using unauthenticated access with lower rate limits."
-        )
+        github_api = Github()
 
     try:
         # Get the authenticated user
