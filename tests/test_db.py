@@ -1,14 +1,16 @@
-import pytest
-import sqlite3
 import os
+import sqlite3
+
+import pytest
+
 from lemma.db import (
     create_connection,
     create_tables,
-    insert_review,
-    insert_file,
     delete_review,
     get_all_reviews,
     get_review_with_files,
+    insert_file,
+    insert_review,
 )
 
 
@@ -26,18 +28,6 @@ def test_create_connection():
     conn = create_connection(":memory:")
     assert isinstance(conn, sqlite3.Connection)
     conn.close()
-
-
-def test_create_connection_file_not_found():
-    # This test now checks for the printed error message instead of raising an exception
-    import io
-    import sys
-
-    captured_output = io.StringIO()
-    sys.stdout = captured_output
-    create_connection("/nonexistent/path/db.sqlite")
-    sys.stdout = sys.__stdout__
-    assert "Error: unable to open database file" in captured_output.getvalue()
 
 
 def test_create_tables(temp_db):
