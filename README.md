@@ -1,6 +1,9 @@
 # Lemma
 
-Welcome to Lemma! This is a project designed to facilitate code review processes by extracting information from GitHub Pull Request, GitHub Branch or GitHub Commit URLs and generating prompts for feedback. This README provides instructions on how to get started with the script.
+Welcome to Lemma! This is a project designed to facilitate code review processes by extracting information from GitHub Pull Request, GitHub Branch or GitHub Commit URLs and generating prompts for feedback. This README provides instructions on how to get started with the app.
+
+![Screenshot 2025-03-30 131819](https://github.com/user-attachments/assets/9458ed49-dd0c-43bd-bc20-b2af27924c7c)
+
 
 ## Prerequisites
 
