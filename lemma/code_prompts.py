@@ -46,7 +46,7 @@ Please generate the code refactoring suggestions based on the provided git diff,
 
 
 CODE_REVIEW_PROMPT = """
-Write a long code review.
+Write a code review in markdown.
 
 Please generate the code review based on the provided git diff, following the above guidelines. The git diff will be provided in the next message, enclosed in triple backticks (```).
 """
